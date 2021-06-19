@@ -4,28 +4,28 @@ import Card from './components/Card';
 import './App.css';
 
 function App() {
-  const [allUsers, setAllUsers] = useState([]);
-  const [updateOnResponse, setUpdateOnResponse] = useState({});
+  const [users, setUsers] = useState([]);
+  const [userDetail, setUserDetail] = useState([]);
 
   let apiCounter = 0;
   let serverLimit = 3;
 
-  const getData = () => {
-    fetch('user-data.json')
-      .then(response => response.json())
-      .then(resJson => {
-        setAllUsers(resJson);
-        for (let i = 0; i < serverLimit; i++) {
-          fetchUserDetails(i, resJson);
-          apiCounter = i;
-        }
-      });
+  async function getData() {
+    const response = await fetch('user-data.json')
+    const data = await response.json();
+    setUsers(data);
+    for (let i = 0; i < serverLimit; i++) {
+      fetchUserDetails(i, data);
+      apiCounter = i;
+    }
   }
 
   const fetchUserDetails = (counter, data) => {
     fetchAPIData(data[counter].id, data[counter].apiUrl).then(response => {
-      setUpdateOnResponse(response);
-      data[response.cardId - 1].apiResponse = response;
+      setUserDetail((details) => {
+        details[response.cardId - 1] = response;
+        return [...details];
+      });
       apiCounter = apiCounter + 1;
       if (apiCounter < data.length) {
         fetchUserDetails(apiCounter, data);
@@ -41,7 +41,7 @@ function App() {
   }
 
   useEffect(() => {
-    getData()
+    getData();
   }, []);
 
   return (
@@ -53,7 +53,7 @@ function App() {
               <h1>User List</h1>
             </div>
           </div>
-          {allUsers.map((user, index) => <Card details={user} key={index} />)}
+          {users.map((user, index) => <Card user={user} details={userDetail} cardId={index} key={index} />)}
         </div>
       </div>
     </div>
