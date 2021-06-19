@@ -47,12 +47,12 @@ function App() {
   return (
     <div className="container-fluid">
       <div className="row">
+        <div className="col-12 text-center">
+          <h1>User List</h1>
+        </div>
+      </div>
+      <div className="row">
         <div className="col-12">
-          <div className="row">
-            <div className="col-12 text-center">
-              <h1>User List</h1>
-            </div>
-          </div>
           {users.map((user, index) => <Card user={user} details={userDetail} cardId={index} key={index} />)}
         </div>
       </div>
